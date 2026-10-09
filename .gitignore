@@ -1,0 +1,18 @@
+# Python 编译缓存文件 (对应你的 __pycache__ 文件夹和 .pyc 文件)
+__pycache__/
+*.py[cod]
+*$py.class
+
+# IDE 配置文件 (对应你的 .idea 文件夹，这是 PyCharm 的配置)
+.idea/
+.vscode/
+
+# 测试输出文件 (对应你的 test_output.png 以及 charts 文件夹)
+# 如果你不希望上传生成的图表和测试结果，可以取消下面这些注释
+*.png
+charts/
+
+# 虚拟环境 (虽然你现在没有，但这是 Python 项目的好习惯)
+venv/
+env/
+.venv/
