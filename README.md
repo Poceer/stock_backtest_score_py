@@ -35,11 +35,12 @@
 | `title` | 自定义图表主标题 | `"收益率回测"` |
 | `periods` | 统计周期（天） | `(5, 15, 30, 60, 90, 180)` |
 | `output_mode` | 输出模式：`"file"` 或 `"base64"` | `"file"` |
-| `save_dir` | `output_mode="file"` 时的保存目录 | `"./charts"` |
+| `save_dir` | `output_mode="file"` 时的保存目录（相对路径统一存到项目根目录） | `"./charts"` |
+| `top_show` | 图表只展示综合得分前 N 名，`None` 表示全部展示 | `None` |
 
 ### 示例 1：直接保存本地 PNG（`output_mode="file"`）
 ```python
-import stock_backtest
+from quant import stock_backtest
 
 result = stock_backtest.run_backtest(
     stock_codes="603893, 688256, 300458",
@@ -58,7 +59,7 @@ print("图片已保存到:", result["save_path"])
 
 ```python
 import base64
-import stock_backtest
+from quant import stock_backtest
 
 result = stock_backtest.run_backtest(
     stock_codes="603893, 688256, 300458",
@@ -70,4 +71,37 @@ result = stock_backtest.run_backtest(
 # 把 base64 解码成图片，手动存到本地
 with open("test_output.png", "wb") as f:
     f.write(base64.b64decode(result["image_base64"]))
-```	  
+```
+
+### 示例 3：按板块名称下钻到成分股（`run_backtest_by_board`）
+看完行业板块强弱后，填感兴趣的板块名称，自动拉该板块全部成分股做个股对比。
+板块名称需与 `ak.stock_board_industry_name_em()` 返回的「板块名称」完全一致。
+
+```python
+from quant import stock_backtest
+
+result = stock_backtest.run_backtest_by_board(
+    board_name="元件",                                     # 板块名称
+    periods=[5, 10, 15, 20, 30, 60, 90, 120, 180, 250],
+    top_show=10,                                           # 图表只展示前 10 名
+    save_dir="./charts",
+)
+# 图片保存到 ./charts/元件成分股收益率回测.png
+```
+
+## 📊 行业板块间对比打分
+
+```bash
+python quant/board_backtest.py
+```
+
+全量拉取所有行业板块（始终全量，不做截断），计算各周期涨幅、横截面 Z-score，
+按 短≤60日 / 60~120日 / >120日 三组加权（0.30/0.45/0.25）得到综合得分，
+只把前 `top_show`（默认 10）名画图存 PNG，剩余结果在 `sorted_scores` 里返回。
+
+| 参数 | 说明 | 默认值 |
+|------|------|--------|
+| `periods` | 统计周期（天） | `(5, 10, 15, 20, 30, 60, 90, 120, 180, 250)` |
+| `top_show` | 图表与明细展示前 N 名，`None` 表示全部 | `10` |
+| `max_workers` | 并发线程数 | `8` |
+

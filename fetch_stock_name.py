@@ -18,7 +18,8 @@ def parse_stock_codes(raw_input: str) -> list:
             prefix = "sh"
         elif code.startswith(("0", "3")):
             prefix = "sz"
-        elif code.startswith(("4", "8")):
+        elif code.startswith(("4", "8", "92")):
+            # 4/8 开头与 920 开头都是北交所
             prefix = "bj"
         else:
             print(f"⚠ 跳过未知前缀的代码: {code}")

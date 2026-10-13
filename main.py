@@ -1,5 +1,4 @@
-import base64
-import stock_backtest
+from quant import stock_backtest
 
 # 从JS迁移过来的板块配置字典
 SECTORS = {
@@ -10,11 +9,21 @@ SECTORS = {
 }
 
 if __name__ == "__main__":
-    # ========== 在这里切换板块，直接改板块名即可 ==========
-    # select_sector = "SOC"
+    # ========== 用法二：按板块名称下钻到成分股对比 ==========
+    # 看完 board_backtest 的板块强弱后，填感兴趣的板块名，自动拉全部成分股做个股对比
+    # result = stock_backtest.run_backtest_by_board(
+    #     board_name="元件",
+    #     periods=[5, 10, 15, 20, 30, 60, 90, 120, 180, 250],
+    #     top_show=10,          # 图表只展示综合得分前 10 名
+    #     save_dir="./charts",  # 相对路径统一存到项目根目录下的 charts
+    # )
+
+    # ========== 用法一：直接指定个股代码 ==========
+    # 在这里切换板块，直接改板块名即可
+    select_sector = "SOC"
     # select_sector = "锂矿"
     # select_sector = "网络安全"
-    select_sector = "算力"
+    # select_sector = "算力"
     # =====================================================
 
     stock_raw = SECTORS[select_sector]
@@ -22,7 +31,7 @@ if __name__ == "__main__":
     result = stock_backtest.run_backtest(
         stock_codes=stock_raw,
         tag=f"{select_sector}",
-        periods=[5, 10, 15, 20, 30, 60, 90, 120, 180, 250],
+        periods=[10, 30, 60, 90, 120, 180, 250],
         title=f"{select_sector}收益率回测",
         save_dir="./charts",
         output_mode='file'
